@@ -3,7 +3,19 @@ name = "libjane"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "janerate_image"
+required-features = ["binary"]
+
+[features]
+default = ["image_gen", "binary"]
+image_gen = []
+binary = ["dep:clap", "dep:hex"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-evalexpr = { version = "11.3.0"}
+clap = { version = "4.5.4", features = ["derive"], optional = true }
+evalexpr = "11.3.0"
+hex = { version = "0.4.3", optional = true }
+image = "0.25.1"
