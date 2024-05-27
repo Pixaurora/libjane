@@ -1,24 +1,15 @@
 use evalexpr::build_operator_tree;
-use evalexpr::context_map;
-use evalexpr::HashMapContext;
+use evalexpr::ContextWithMutableVariables;
 use evalexpr::Node;
+use evalexpr::Value;
 
 use crate::error::GraphingResult;
 
+use self::math::base_context;
 use self::point::GraphPoint;
 
+mod math;
 pub mod point;
-
-pub fn base_context(point: &GraphPoint) -> GraphingResult<HashMapContext> {
-    let context = context_map! {
-        "phi" => (1.0 + 5_f64.sqrt()) / 2.0,
-        "x" => point.x(),
-        "y" => point.y(),
-        "z" => point.z()
-    }?;
-
-    Ok(context)
-}
 
 #[derive(Clone)]
 pub struct GraphingFunction {
@@ -33,7 +24,11 @@ impl GraphingFunction {
     }
 
     pub fn is_shaded(&self, point: &GraphPoint) -> GraphingResult<bool> {
-        let mut context = base_context(point)?;
+        let mut context = base_context()?;
+
+        for (name, value) in [("x", point.x()), ("y", point.y()), ("z", point.z())] {
+            context.set_value(String::from(name), Value::Float(value))?;
+        }
 
         let shading = self.statement.eval_boolean_with_context_mut(&mut context)?;
         return Ok(shading);
