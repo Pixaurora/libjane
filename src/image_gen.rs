@@ -16,7 +16,7 @@ impl GraphsImage for LayerStack<Rgba<u8>> {
 
         for z in 0..size_z {
             for x in 0..size_x {
-                let point = GraphPoint::new(-(x as f64 - center_x), 0.0, -(z as f64 - center_z));
+                let point = GraphPoint::new(x as f64 - center_x, 0.0, -(z as f64 - center_z));
                 let color = self.shade_at(&point)?;
                 image.put_pixel(x, z, color.clone());
             }
